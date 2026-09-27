@@ -19,3 +19,17 @@ jobs:
         run: pip install platformio
       - name: Build ESP32-C3 firmware
         run: pio run
+
+      - name: Build merged firmware
+        run: pio run -t merged
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: COB-PWM-Controller-firmware
+          path: |
+            .pio/build/esp32-c3-devkitm-1/firmware.bin
+            .pio/build/esp32-c3-devkitm-1/firmware.merged.bin
+            .pio/build/esp32-c3-devkitm-1/bootloader.bin
+            .pio/build/esp32-c3-devkitm-1/partitions.bin
+          if-no-files-found: error
