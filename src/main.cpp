@@ -11,6 +11,7 @@ bool powerOn = true;
 uint8_t brightness = DEFAULT_BRIGHTNESS;
 uint32_t lastWifiAttempt = 0;
 constexpr uint32_t WIFI_RETRY_INTERVAL_MS = 10000;
+constexpr uint8_t PWM_CHANNEL = 0;
 
 static uint32_t dutyForBrightness(uint8_t value) {
   const uint32_t maxDuty = (1UL << PWM_RESOLUTION_BITS) - 1UL;
@@ -18,7 +19,7 @@ static uint32_t dutyForBrightness(uint8_t value) {
 }
 
 void applyOutput() {
-  ledcWrite(PWM_PIN, powerOn ? dutyForBrightness(brightness) : 0);
+  ledcWrite(PWM_CHANNEL, powerOn ? dutyForBrightness(brightness) : 0);
 }
 
 void saveState() {
@@ -121,10 +122,8 @@ void setup() {
   Serial.begin(115200);
   delay(50);
   // No Bluetooth initialization. No OLED/display code. No deep/light sleep.
-  if (!ledcAttach(PWM_PIN, PWM_FREQUENCY_HZ, PWM_RESOLUTION_BITS)) {
-    Serial.println("ERROR: PWM attach failed.");
-    while (true) delay(1000);
-  }
+  ledcSetup(PWM_CHANNEL, PWM_FREQUENCY_HZ, PWM_RESOLUTION_BITS);
+  ledcAttachPin(PWM_PIN, PWM_CHANNEL);
   prefs.begin("cob-pwm", false);
   loadState();
   applyOutput();
