@@ -2,3 +2,6 @@
 .vscode/
 .DS_Store
 *.pyc
+
+# Local Arduino IoT Cloud credentials. Never commit this file.
+include/arduino_cloud_secrets.h
