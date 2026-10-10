@@ -21,13 +21,24 @@ Robust ESP32-C3 COB LED PWM controller for continuous, responsive operation.
 - No deep sleep or light sleep
 - Responsive main loop
 - No display dependencies
+- Optional Arduino IoT Cloud controls for remote power and brightness
 
 ## Setup
-1. Open include/config.h.
-2. Set WIFI_SSID and WIFI_PASSWORD.
+1. Open `include/config.h`.
+2. Set `WIFI_SSID` and `WIFI_PASSWORD` for the normal local-only connection.
 3. Build with PlatformIO.
 4. Flash the ESP32-C3.
 5. Open the IP address printed by Serial Monitor.
+
+## Arduino IoT Cloud experiment
+This branch optionally connects the controller to Arduino IoT Cloud. The Thing variables must be named `powerOn` (Boolean) and `brightness` (Integer), with Read & Write permission.
+
+To enable it locally:
+1. Copy `include/arduino_cloud_secrets.h.example` to `include/arduino_cloud_secrets.h`.
+2. Fill in the Arduino Cloud Device ID, Device Secret Key, Wi-Fi SSID, and Wi-Fi password.
+3. Build the firmware locally with PlatformIO, then flash it or update it through the existing OTA path.
+
+The real secrets file is git-ignored. **Never commit the Device Secret Key or publish a cloud-enabled firmware binary from this public repository**: the compiled firmware needs the key to authenticate. GitHub Actions builds run without the local ignored secrets file, so their artifact is a compile-check build and will not connect to Arduino IoT Cloud.
 
 ## Safety
 Do not drive a COB LED directly from an ESP32 GPIO. GPIO 3 is only the PWM control signal for a suitable MOSFET/LED driver circuit. Use an appropriate current-limited LED power supply and suitable grounding.
